@@ -1,0 +1,14 @@
+extends layout
+block content
+    div
+        form(method="post", action="/api/users/add")
+            if errors
+                div
+                    for error in errors
+                        p(style="color: red;")= error.msg
+            div
+                label(for="name") Name
+                input(type="text" name="name" id="name")
+            div
+                button Add
+
