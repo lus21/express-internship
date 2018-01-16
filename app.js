@@ -5,6 +5,9 @@ const expressValidator = require('express-validator');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 
+const userRouter = require('./controllers/user');
+
+
 const app = express();
   
 app.set('view engine', 'pug');
@@ -18,6 +21,8 @@ app.use(session({
     resave: false,
     saveUninitialized: true
 }));
+
+app.use('/v1/api', userRouter);
 
 function loginCheckMiddleware(req, res, next) {
     if (req.session.user) {
