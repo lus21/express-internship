@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const expressValidator = require('express-validator');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const initApi = require('./modules');
 
 const app = express();
   
@@ -18,6 +19,8 @@ app.use(session({
     resave: false,
     saveUninitialized: true
 }));
+
+initApi(app);
 
 function loginCheckMiddleware(req, res, next) {
     if (req.session.user) {
