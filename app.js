@@ -5,7 +5,7 @@ const expressValidator = require('express-validator');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 
-const userRouter = require('./controllers/user');
+const initApi = require('./routes');
 
 
 const app = express();
@@ -22,7 +22,7 @@ app.use(session({
     saveUninitialized: true
 }));
 
-app.use('/v1/api', userRouter);
+initApi(app);
 
 function loginCheckMiddleware(req, res, next) {
     if (req.session.user) {
@@ -138,33 +138,6 @@ app.get('/api/user', (req, res) => {
     });
 });
 
-app.get('/api/users', (req, res) => {
-    res.json(users);
-});
-
-app.get('/api/users/:userId', (req, res) => {
-    res.send(req.query.c);
-});
-
-app.post('/api/users/add', (req, res) => {
-    req.checkBody('name').notEmpty().withMessage('Name is required');
-    const errors = req.validationErrors();
-    console.log(errors)
-    if (errors) {
-        res.render('addUser', {
-            errors,
-        });
-    } else {
-        const name = req.body.name;
-        res.cookie('username', name);
-        users.push({
-            name,
-        });
-        res.json({
-            name,
-        });
-    }
-});
 
 app.use((req, res, next) => {
     console.log('request');

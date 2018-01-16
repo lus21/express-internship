@@ -5,3 +5,5 @@ const router = Router();
 
 router.get('/users', handlers.getUsers);
 router.delete('/users/:userId', handlers.deleteUsers);
+
+module.exports = router;
