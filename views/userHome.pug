@@ -1,0 +1,7 @@
+extends layout
+block content
+    div
+        if user
+            h1= `Welcome ${user}`
+        form(action="/signout" method="post")
+            button Sign Out
