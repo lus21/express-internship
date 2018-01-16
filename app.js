@@ -2,6 +2,8 @@ const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
 const expressValidator = require('express-validator');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
 
 const app = express();
   
@@ -10,13 +12,25 @@ app.set('view engine', 'pug');
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(expressValidator());
+app.use(cookieParser())
+app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true
+}))
 
 app.get('/', (req, res) => {
     console.log('request');
+    if (req.session.views) {
+        req.session.views++
+      } else {
+        req.session.views = 1
+      }
     res.render('home', {
         user: 'Bob',
         age: 25,
         title: 'home',
+        views: req.session.views,
         params: {
             a: 'aa'
         }
@@ -35,7 +49,7 @@ const users = [
 
 app.get('/api/user', (req, res) => {
     res.json({
-        name: 'John',
+        username: req.cookies.username,
     });
 });
 
@@ -48,7 +62,7 @@ app.get('/api/users/:userId', (req, res) => {
 });
 
 app.post('/api/users/add', (req, res) => {
-    req.checkParams('name').notEmpty().withMessage('Name is required');
+    req.checkBody('name').notEmpty().withMessage('Name is required');
     const errors = req.validationErrors();
     console.log(errors)
     if (errors) {
@@ -57,6 +71,7 @@ app.post('/api/users/add', (req, res) => {
         });
     } else {
         const name = req.body.name;
+        res.cookie('username', name);
         users.push({
             name,
         });
